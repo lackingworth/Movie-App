@@ -1,0 +1,286 @@
+<template>
+
+  <div class="home">
+
+    <div class="feature-card">
+      <form @submit.prevent="searchMovies()" class="search-box">
+        <input type="text" placeholder="Search..." v-model="search">
+        <input type="submit" value="Search">
+      </form>
+      <router-link to="/movie/tt0434665">
+        <img src="https://img.flawlessfiles.com/_r/1366x768/100/58/d0/58d0b99666b285d2c484fec5dfaa23f0/58d0b99666b285d2c484fec5dfaa23f0.jpg" alt="Bleach Poster" class="featured-img">
+        <div class="detail">
+          <h3>Bleach</h3>
+          <p>High school student Ichigo Kurosaki, who has the ability to see ghosts, gains soul reaper powers from Rukia Kuchiki and sets out to save the world from Hollows.</p>
+        </div>
+      </router-link>
+    </div>
+
+    <div class="loader" v-if="loading"></div>
+    <div class="loading" v-if="loading">Loading...</div>
+
+    <div class="movies-list">
+      <div class="movie" v-for="movie in movies" :key="movie.imdbID">
+        <router-link :to="'/movie/' + movie.imdbID" class="movie-link">
+          <div class="product-image">
+            <img :src="movie.Poster" alt="Movie Poster" />
+            <div class="type">{{ movie.Type }}</div>
+          </div>
+          <div class="detail">
+            <p class="year">{{ movie.Year }}</p>
+            <h3>{{ movie.Title }}</h3>
+          </div>
+        </router-link>
+      </div>
+    </div>
+
+  </div>
+
+</template>
+
+<script>
+import { ref, onBeforeMount } from 'vue';
+import env from '@/env.js';
+
+export default {
+  setup() {
+    const search = ref('');
+    const movies = ref([]);
+    let loading = ref(false);
+
+    const searchMovies = () => {
+      if (search.value != "") {
+        loading.value = true;
+        fetch(`https://www.omdbapi.com/?apikey=${env.api_key}&s=${search.value}`)
+          .then(response => response.json())
+          .then(data => {
+            loading.value = false;
+            movies.value = data.Search;
+            search.value = "";
+          });
+      }
+    };
+
+    onBeforeMount(() => {
+      const films = ['avatar', 'superman', 'batman', 'bleach', 'naruto', 'avengers']
+      const randFilm = Math.floor(Math.random() * films.length);
+      loading.value = true;
+      fetch(`https://www.omdbapi.com/?apikey=${env.api_key}&s=${films[randFilm]}`)
+          .then(response => response.json())
+          .then(data => {
+            loading.value = false;
+            movies.value = data.Search;
+            search.value = "";
+          });
+    })
+
+    return {
+      search,
+      movies,
+      loading,
+      searchMovies
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+  .home {
+    .feature-card {
+      position: relative;
+
+      .featured-img {
+        display: block;
+        width: 100%;
+        height: 500px;
+        object-fit: cover;
+
+        position: relative;
+        z-index: 0;
+      }
+
+      .detail {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.6);
+        padding: 16px;
+        z-index: 1;
+
+        h3 {
+          color:#FFF;
+          margin-bottom: 16px;
+        }
+
+        p {
+          color: #FFF;
+          text-align: left;
+        }
+      }
+    }
+    ::placeholder {
+      opacity: 0.3;
+    }
+
+    .search-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px;
+
+      input {
+        display: block;
+        appearance: none;
+        border: none;
+        outline: none;
+        background: none;
+
+        &[type="text"] {
+          width: 100%;
+          color: #FFF;
+          background-color: #496583;
+          font-size: 20px;
+          padding: 10px 16px;
+          border-radius: 8px 0px 0px 0px;
+          margin-bottom: 1px;
+          transition: 0.4s;
+
+          &::placeholder {
+            color: #f3f3f3;
+          }
+
+          &:hover {
+            background-color: #537497;
+          }
+
+          &:focus {
+            box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+          }
+        }
+
+        &[type="submit"] {
+          width: 100%;
+          max-width: 150px;
+          background-color: #42B883;
+          padding: 10px 16px;
+          margin-bottom: 1px;
+          border-radius: 0px 8px 8px 0px;
+          color: #FFF;
+          font-size: 20px;
+          text-transform: uppercase;
+          transition: 0.4s;
+          cursor: pointer;
+
+          &:hover {
+            background-color: #4edb9c;
+          }
+
+          &:active {
+            background-color: #3B8070;
+          }
+        }
+      }
+    }
+
+    .movies-list {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0px 8px;
+
+      .movie {
+        max-width: 25%;
+        flex: 1 1 50%;
+        padding: 16px 8px;
+
+        .movie-link {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+
+          .product-image {
+            position: relative;
+            display: block;
+
+            img {
+              display: block;
+              width: 100%;
+              height: 275px;
+              object-fit: cover;
+            }
+
+            .type {
+              position: absolute;
+              padding: 8px 16px;
+              background-color: #42B883;
+              color: #FFF;
+              bottom: 16px;
+              left: 0px;
+              text-transform: capitalize;
+            }
+          }
+
+          .detail {
+            background-color: #496583;
+            padding: 16px 8px;
+            flex: 1 1 100%;
+            border-radius: 0px 0px 8px 8px;
+
+            .year {
+              color: #AAA;
+              font-size: 14px;
+            }
+
+            h3 {
+              color: #FFF;
+              font-weight: 600;
+              font-size: 18px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .loader {
+    margin: auto;
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #000203; /* Blue */
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 1s linear infinite;
+  }
+
+  .loading {
+    margin: 12px;
+    text-align: center;
+    color: #FFF;
+    font-size: 20px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @media only screen and (max-width: 650px) {
+    .featured-img {
+        height: 300px !important;
+    }
+
+    .detail {
+        font-size: 14px !important;
+        z-index: 1;
+
+        p {
+          font-size: 13px !important;
+        }
+    }
+
+    .movie {
+        max-width: 50% !important;
+    }
+  }
+
+</style>
