@@ -19,7 +19,7 @@
     <div class="loader" v-if="loading"></div>
     <div class="loading" v-if="loading">Loading...</div>
 
-    <div class="movies-list">
+    <div class="movies-list" v-if="!loading">
       <div class="movie" v-for="movie in movies" :key="movie.imdbID">
         <router-link :to="'/movie/' + movie.imdbID" class="movie-link">
           <div class="product-image">
@@ -47,37 +47,56 @@ export default {
     const search = ref('');
     const movies = ref([]);
     let loading = ref(false);
+    const error = ref(null);
 
-    const searchMovies = () => {
-      if (search.value != "") {
-        loading.value = true;
-        fetch(`https://www.omdbapi.com/?apikey=${env.api_key}&s=${search.value}`)
-          .then(response => response.json())
-          .then(data => {
-            loading.value = false;
-            movies.value = data.Search;
-            search.value = "";
-          });
+    const searchMovies = async () => {
+      try {
+        if (search.value != "") {
+          loading.value = true;
+          const res = await fetch(`https://www.omdbapi.com/?apikey=${env.api_key}&s=${search.value}`);
+          if (res.ok) {
+            await res.json()
+              .then(data => {
+                loading.value = false;
+                movies.value = data.Search;
+                search.value = "";
+              });
+          }
+          throw new Error ('Request failed');
+        }
+      } catch(err) {
+        error.value = err;
+        console.log(err);
       }
     };
 
-    onBeforeMount(() => {
+    onBeforeMount(async () => {
       const films = ['avatar', 'superman', 'batman', 'bleach', 'naruto', 'avengers']
       const randFilm = Math.floor(Math.random() * films.length);
-      loading.value = true;
-      fetch(`https://www.omdbapi.com/?apikey=${env.api_key}&s=${films[randFilm]}`)
-          .then(response => response.json())
-          .then(data => {
-            loading.value = false;
-            movies.value = data.Search;
-            search.value = "";
-          });
+      
+      try {
+        loading.value = true;
+        const res = await fetch(`https://www.omdbapi.com/?apikey=${env.api_key}&s=${films[randFilm]}`);
+        if(res.ok) {
+          await res.json()
+            .then(data => {
+              loading.value = false;
+              movies.value = data.Search;
+              search.value = "";
+            });
+        };
+        throw new Error ('Request failed');
+      } catch(err) {
+          error.value = err;
+          console.log(err);
+      }
     })
 
     return {
       search,
       movies,
       loading,
+      error,
       searchMovies
     }
   }
@@ -189,9 +208,10 @@ export default {
       margin: 0px 8px;
 
       .movie {
-        max-width: 25%;
+        max-width: 12%;
         flex: 1 1 50%;
         padding: 16px 8px;
+        
 
         .movie-link {
           display: flex;
@@ -244,8 +264,8 @@ export default {
 
   .loader {
     margin: auto;
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #000203; /* Blue */
+    border: 16px solid #f3f3f3; 
+    border-top: 16px solid #000203; 
     border-radius: 50%;
     width: 80px;
     height: 80px;
@@ -264,7 +284,19 @@ export default {
     100% { transform: rotate(360deg); }
   }
 
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: 1360px) {
+     .home{ 
+      .movies-list {
+        .movie {
+          max-width: 20%;
+          flex: 1 1 50%;
+          padding: 16px 8px;
+        }
+      }
+    }
+  }
+
+  @media only screen and (max-width: 785px) {
     .featured-img {
         height: 300px !important;
     }

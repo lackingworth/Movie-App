@@ -1,4 +1,6 @@
 <template>
+    <div class="loader" v-if="loading"></div>
+    <div class="loading" v-if="loading">Loading...</div>
     <div class="movie-details">
       <h2>{{movie.Title}}</h2>
       <p>{{ movie.Year }}</p>
@@ -13,20 +15,35 @@ import { useRoute } from 'vue-router';
 import env from '@/env.js';
 
 export default {
+  
   setup () {
     const movie = ref({});
     const route = useRoute();
+    const loading = ref(false);
+    const error = ref(null);
 
-    onBeforeMount(() => {
-      fetch(`https://www.omdbapi.com/?apikey=${env.api_key}&i=${route.params.id}&plot=full`)
-        .then(response => response.json())
-        .then(data => {
-          movie.value = data;
-        });
+    onBeforeMount(async () => {
+      try {
+        loading.value = true;
+        const res = await fetch(`https://www.omdbapi.com/?apikey=${env.api_key}&i=${route.params.id}&plot=full`);
+        if(res.ok) {
+          await res.json()
+            .then (data => {
+              loading.value = false;
+              movie.value = data;
+            });
+        }
+        throw new Error ('Request failed');
+      } catch (err) {
+        error.value = err;
+        console.log(err);
+      }
     });
 
     return {
-      movie
+      movie,
+      loading,
+      error
     }
   }
 }
@@ -34,6 +51,7 @@ export default {
 </script>
 
 <style lang="scss">
+
   .movie-details {
     padding: 16px;
     margin: auto;
