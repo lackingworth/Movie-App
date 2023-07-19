@@ -1,12 +1,29 @@
 <template>
-    <div class="loader" v-if="loading"></div>
-    <div class="loading" v-if="loading">Loading...</div>
-    <div class="movie-details">
-      <h2>{{movie.Title}}</h2>
-      <p>{{ movie.Year }}</p>
-      <img :src="movie.Poster" alt="Movie Poster" class="featured-img" />
-      <p>{{ movie.Plot }}</p>
-    </div>
+
+  <div class="movie-details" v-if="loading">
+    <div class="loader"></div>
+    <div class="loading">Loading...</div>   
+  </div>
+  
+  <div class="movie-details" v-if="!loading">
+    <h2>{{movie.Title}}</h2>
+     <p>{{ movie.Year }}</p>
+     <v-img
+       class="featured-img"
+       width="400"
+       :src="movie.Poster"
+       alt="Movie Poster">
+       <template v-slot:placeholder>
+         <div class="d-flex align-center justify-center fill-height">
+           <v-progress-circular
+             color="grey-lighten-4"
+             indeterminate>
+           </v-progress-circular>
+         </div>
+       </template>
+     </v-img>
+     <p>{{ movie.Plot }}</p>
+   </div>
 </template>
 
 <script>
@@ -32,8 +49,10 @@ export default {
               loading.value = false;
               movie.value = data;
             });
+        } else {
+            loading.value = false;
+            throw new Error ('Request failed');
         }
-        throw new Error ('Request failed');
       } catch (err) {
         error.value = err;
         console.log(err);

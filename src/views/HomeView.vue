@@ -19,11 +19,16 @@
     <div class="loader" v-if="loading"></div>
     <div class="loading" v-if="loading">Loading...</div>
 
-    <div class="movies-list" v-if="!loading">
+    <div class="error" v-if="error !=null">
+      <h1>Sorry, can't get relevant data. <br> {{ error }}</h1>
+    </div>
+
+    <div class="movies-list" v-if="(!loading && !error)">
+
       <div class="movie" v-for="movie in movies" :key="movie.imdbID">
         <router-link :to="'/movie/' + movie.imdbID" class="movie-link">
           <div class="product-image">
-            <img :src="movie.Poster" alt="Movie Poster" />
+            <img :src="movie.Poster" alt="Movie Poster">
             <div class="type">{{ movie.Type }}</div>
           </div>
           <div class="detail">
@@ -32,6 +37,7 @@
           </div>
         </router-link>
       </div>
+      
     </div>
 
   </div>
@@ -61,8 +67,10 @@ export default {
                 movies.value = data.Search;
                 search.value = "";
               });
+          } else {
+              loading.value = false;
+              throw new Error ('Request failed');
           }
-          throw new Error ('Request failed');
         }
       } catch(err) {
         error.value = err;
@@ -84,8 +92,11 @@ export default {
               movies.value = data.Search;
               search.value = "";
             });
+        } else {
+            loading.value = false;
+            throw new Error ('Request failed');
         };
-        throw new Error ('Request failed');
+        
       } catch(err) {
           error.value = err;
           console.log(err);
@@ -138,6 +149,20 @@ export default {
         }
       }
     }
+
+    .error {
+      h1 {
+        font-weight: normal;
+        text-align: center;
+        margin: auto;
+        color:#ad2828c5;
+        background-color: #aaa5a58e;
+        width: 50vw;
+        min-width: 350px;
+        padding: 10px;
+      }
+    }
+
     ::placeholder {
       opacity: 0.3;
     }
@@ -207,12 +232,16 @@ export default {
       flex-wrap: wrap;
       margin: 0px 8px;
 
+      .movie:hover {
+        opacity: 0.3;
+      }
+
       .movie {
         max-width: 12%;
         flex: 1 1 50%;
         padding: 16px 8px;
+        transition: 0.4s;
         
-
         .movie-link {
           display: flex;
           flex-direction: column;
