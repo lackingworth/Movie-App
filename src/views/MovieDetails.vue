@@ -26,47 +26,35 @@
    </div>
 </template>
 
-<script>
+<script setup>
 import { ref, onBeforeMount } from 'vue';
 import { useRoute } from 'vue-router';
 import env from '@/env.js';
 
-export default {
-  
-  setup () {
-    const movie = ref({});
-    const route = useRoute();
-    const loading = ref(false);
-    const error = ref(null);
+const movie = ref({});
+const route = useRoute();
+const loading = ref(false);
+const error = ref(null);
 
-    onBeforeMount(async () => {
-      try {
-        loading.value = true;
-        const res = await fetch(`https://www.omdbapi.com/?apikey=${env.api_key}&i=${route.params.id}&plot=full`);
-        if(res.ok) {
-          await res.json()
-            .then (data => {
-              loading.value = false;
-              movie.value = data;
-            });
-        } else {
-            loading.value = false;
-            throw new Error ('Request failed');
-        }
-      } catch (err) {
-        error.value = err;
-        console.log(err);
-      }
-    });
-
-    return {
-      movie,
-      loading,
-      error
+onBeforeMount(async () => {
+  try {
+    loading.value = true;
+    const res = await fetch(`https://www.omdbapi.com/?apikey=${env.api_key}&i=${route.params.id}&plot=full`);
+    if(res.ok) {
+      await res.json()
+        .then (data => {
+          loading.value = false;
+          movie.value = data;
+        });
+    } else {
+        loading.value = false;
+        throw new Error ('Request failed');
     }
+  } catch (err) {
+    error.value = err;
+    console.log(err);
   }
-}
-
+});
 </script>
 
 <style lang="scss">

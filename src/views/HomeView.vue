@@ -44,74 +44,63 @@
 
 </template>
 
-<script>
+<script setup>
 import { ref, onBeforeMount } from 'vue';
 import env from '@/env.js';
 
-export default {
-  setup() {
-    const search = ref('');
-    const movies = ref([]);
-    let loading = ref(false);
-    const error = ref(null);
+const search = ref('');
+const movies = ref([]);
+let loading = ref(false);
+const error = ref(null);
 
-    const searchMovies = async () => {
-      try {
-        if (search.value != "") {
-          loading.value = true;
-          const res = await fetch(`https://www.omdbapi.com/?apikey=${env.api_key}&s=${search.value}`);
-          if (res.ok) {
-            await res.json()
-              .then(data => {
-                loading.value = false;
-                movies.value = data.Search;
-                search.value = "";
-              });
-          } else {
-              loading.value = false;
-              throw new Error ('Request failed');
-          }
-        }
-      } catch(err) {
-        error.value = err;
-        console.log(err);
-      }
-    };
-
-    onBeforeMount(async () => {
-      const films = ['avatar', 'superman', 'batman', 'bleach', 'naruto', 'avengers']
-      const randFilm = Math.floor(Math.random() * films.length);
-      
-      try {
-        loading.value = true;
-        const res = await fetch(`https://www.omdbapi.com/?apikey=${env.api_key}&s=${films[randFilm]}`);
-        if(res.ok) {
-          await res.json()
-            .then(data => {
-              loading.value = false;
-              movies.value = data.Search;
-              search.value = "";
-            });
-        } else {
+const searchMovies = async () => {
+  try {
+    if (search.value != "") {
+      loading.value = true;
+      const res = await fetch(`https://www.omdbapi.com/?apikey=${env.api_key}&s=${search.value}`);
+      if (res.ok) {
+        await res.json()
+          .then(data => {
             loading.value = false;
-            throw new Error ('Request failed');
-        };
-        
-      } catch(err) {
-          error.value = err;
-          console.log(err);
+            movies.value = data.Search;
+            search.value = "";
+          });
+      } else {
+          loading.value = false;
+          throw new Error ('Request failed');
       }
-    })
-
-    return {
-      search,
-      movies,
-      loading,
-      error,
-      searchMovies
     }
+  } catch(err) {
+    error.value = err;
+    console.log(err);
   }
-}
+};
+
+onBeforeMount(async () => {
+  const films = ['avatar', 'superman', 'batman', 'bleach', 'naruto', 'avengers']
+  const randFilm = Math.floor(Math.random() * films.length);
+      
+  try {
+    loading.value = true;
+    const res = await fetch(`https://www.omdbapi.com/?apikey=${env.api_key}&s=${films[randFilm]}`);
+    if(res.ok) {
+      await res.json()
+        .then(data => {
+          loading.value = false;
+          movies.value = data.Search;
+          search.value = "";
+        });
+    } else {
+        loading.value = false;
+        throw new Error ('Request failed');
+      };
+        
+  } catch(err) {
+      error.value = err;
+      console.log(err);
+  }
+})
+
 </script>
 
 <style lang="scss">
