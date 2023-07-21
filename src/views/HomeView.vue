@@ -7,7 +7,7 @@
         <input type="text" placeholder="Search..." v-model="search">
         <input type="submit" value="Search">
       </form>
-      <router-link to="/movie/tt0434665">
+      <router-link to="/movie/tt0434665" class="featured-inner">
         <img src="https://img.flawlessfiles.com/_r/1366x768/100/58/d0/58d0b99666b285d2c484fec5dfaa23f0/58d0b99666b285d2c484fec5dfaa23f0.jpg" alt="Bleach Poster" class="featured-img">
         <div class="detail">
           <h3>Bleach</h3>
@@ -127,6 +127,14 @@ export default {
 
         position: relative;
         z-index: 0;
+      }
+
+      .featured-inner {
+        transition: 0.3s;
+      }
+
+      .featured-inner:hover {
+        opacity: 0.8;
       }
 
       .detail {
