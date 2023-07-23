@@ -7,13 +7,7 @@
         <input type="text" placeholder="Search..." v-model="search">
         <input type="submit" value="Search">
       </form>
-      <router-link to="/movie/tt0434665" class="featured-inner">
-        <img src="https://img.flawlessfiles.com/_r/1366x768/100/58/d0/58d0b99666b285d2c484fec5dfaa23f0/58d0b99666b285d2c484fec5dfaa23f0.jpg" alt="Bleach Poster" class="featured-img">
-        <div class="detail">
-          <h3>Bleach</h3>
-          <p>High school student Ichigo Kurosaki, who has the ability to see ghosts, gains soul reaper powers from Rukia Kuchiki and sets out to save the world from Hollows.</p>
-        </div>
-      </router-link>
+      <Carousel />
     </div>
 
     <div class="loader" v-if="loading"></div>
@@ -47,6 +41,7 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue';
 import env from '@/env.js';
+import Carousel from '@/components/Carousel.vue'
 
 const search = ref('');
 const movies = ref([]);
