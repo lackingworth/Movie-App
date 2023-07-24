@@ -10,8 +10,7 @@
       <Carousel />
     </div>
 
-    <div class="loader" v-if="loading"></div>
-    <div class="loading" v-if="loading">Loading...</div>
+    <LazyList v-if="loading" />
 
     <div class="error" v-if="error !=null">
       <h1>Sorry, can't get relevant data. <br> {{ error }}</h1>
@@ -42,6 +41,7 @@
 import { ref, onBeforeMount } from 'vue';
 import env from '@/env.js';
 import Carousel from '@/components/Carousel.vue'
+import LazyList from '@/components/LazyList.vue'
 
 const search = ref('');
 const movies = ref([]);

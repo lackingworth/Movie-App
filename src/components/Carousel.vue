@@ -1,9 +1,11 @@
 <template>
     <div class="carousel-container">
-        <v-carousel hide-delimiters show-arrows="hover" cycle >
+        <v-carousel hide-delimiters show-arrows="hover" cycle>
             <router-link to="/movie/tt0434665" class="featured-inner-carousel">
                 <v-carousel-item 
-                src="../../public/bleach.jpg"
+                src="../../public/assets/bleach.jpg"
+                lazy-src="../../public/assets/rsz_bleach.jpg"
+                cover
                 >
                 <div class="detail-carousel">
                     <h3>Bleach</h3>
@@ -14,7 +16,9 @@
 
             <router-link to="/movie/tt28265657" class="featured-inner-carousel">
                 <v-carousel-item
-                src="../../public/glasses.jpg"
+                src="../../public/assets/glasses.jpg"
+                lazy-src="../../public/assets/rsz_1glasses.jpg"
+                cover
                 >
                     <div class="detail-carousel">
                         <h3>The Girl I Like Forgot Her Glasses</h3>
@@ -25,7 +29,9 @@
 
             <router-link to="/movie/tt19869172" class="featured-inner-carousel">
                 <v-carousel-item
-                src="../../public/mhm.jpg"
+                src="../../public/assets/mhm.jpg"
+                lazy-src="../../public/assets/rsz_1mhm.jpg"
+                cover
                 >
                     <div class="detail-carousel">
                         <h3>Watashi no Shiawase na Kekkon</h3>
@@ -36,7 +42,9 @@
 
             <router-link to="/movie/tt22868844" class="featured-inner-carousel">
                 <v-carousel-item
-                src="../../public/blackclover.jpg"
+                src="../../public/assets/blackclover.jpg"
+                lazy-src="../../public/assets/rsz_blackclover.jpg"
+                cover
                 >
                     <div class="detail-carousel">
                         <h3>Black Clover: Sword of the Wizard King</h3>
